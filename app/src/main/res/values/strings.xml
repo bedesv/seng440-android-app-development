@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Budget Tracker</string>
+    <string name="title_activity_add_transaction">addTransaction</string>
 </resources>
