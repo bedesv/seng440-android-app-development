@@ -1,12 +1,6 @@
 package com.bedesv.budgettracker
 import android.app.DatePickerDialog
-import android.os.Bundle
-import android.view.KeyEvent
-import android.view.KeyEvent.KEYCODE_ENTER
 import android.widget.DatePicker
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.waitForUpOrCancellation
@@ -19,13 +13,8 @@ import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.LocalContentColor
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -35,33 +24,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.tooling.preview.Preview
-import com.bedesv.budgettracker.ui.theme.BudgetTrackerTheme
 import java.math.BigDecimal
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.util.Calendar
-
-class AddTransaction : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            BudgetTrackerTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    TransactionForm(amountValue = "")
-                }
-            }
-        }
-    }
-}
+import androidx.navigation.NavController
 
 fun isValidTransactionAmount(transactionAmountStr: String): Boolean {
     if (transactionAmountStr.isBlank()) {
@@ -82,12 +49,13 @@ fun isValidTransactionAmount(transactionAmountStr: String): Boolean {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TransactionForm(amountValue: String) {
-    var transactionAmount by remember { mutableStateOf(TextFieldValue(amountValue))}
+fun AddTransactionScreen(navigationController: NavController) {
+    var transactionAmount by remember { mutableStateOf(TextFieldValue(""))}
     var transactionAmountError by remember { mutableStateOf(false) }
     var transactionNote by remember { mutableStateOf(TextFieldValue(""))}
 
-    val context = LocalContext.current
+    val context = BudgetTrackerApplication.AppContextManager.getAppContext()
+    val transactionService = TransactionService.getInstance()
     val calendar = Calendar.getInstance()
 
 
@@ -144,32 +112,12 @@ fun TransactionForm(amountValue: String) {
                 }
             }
         )
-        
-        Button(onClick = {saveTransaction(transactionNote.text, transactionDateText, transactionAmount.text)}) {
+
+        Button(onClick = {
+            transactionService.saveTransaction(transactionNote.text, transactionDateText, transactionAmount.text)
+            navigationController.navigate(Screen.HomeScreen.route)
+        }) {
             Text(text = "Save Transaction")
         }
-    }
-}
-
-fun saveTransaction(notes: String, date: String, amount: String) {
-    val db = AppDatabase.getInstance()
-    val transactionDao = db.transactionDao()
-    val formatter = DateTimeFormatter.ofPattern("d/M/yyyy")
-
-    val transaction = Transaction(amount=amount.toFloat(), date=LocalDate.parse(date, formatter).toEpochDay(), notes=notes)
-
-    transactionDao.insertAll(transaction)
-
-
-    println(transactionDao.getAll())
-
-
-}
-
-@Preview(showBackground = true)
-@Composable
-fun TransactionFormPreview() {
-    BudgetTrackerTheme {
-        TransactionForm(amountValue = "")
     }
 }

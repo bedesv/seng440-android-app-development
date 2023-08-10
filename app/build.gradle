@@ -28,8 +28,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     kotlinOptions {
         jvmTarget = '1.8'
@@ -74,6 +74,12 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
     implementation "androidx.compose.material:material-icons-extended:1.4.3"
+
+    implementation 'io.github.oshai:kotlin-logging-jvm:5.0.1'
+    implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.6'
+    implementation "androidx.navigation:navigation-compose:2.6.0"
+
+
 
 }
 
