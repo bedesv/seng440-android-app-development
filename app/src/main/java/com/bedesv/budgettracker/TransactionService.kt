@@ -1,7 +1,5 @@
 package com.bedesv.budgettracker
 
-import androidx.room.Delete
-import androidx.room.Insert
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -28,7 +26,8 @@ class TransactionService {
     }
 
     fun saveTransaction(notes: String, date: String, amount: String) {
-        val transaction = Transaction(amount=amount.toFloat(), date=LocalDate.parse(date, dateTimeFormatter).toEpochDay(), notes=notes)
+        val transaction =
+            TransactionDatabaseObject(amount=amount.toFloat(), date=LocalDate.parse(date, dateTimeFormatter).toEpochDay(), notes=notes)
 
         transactionDao.insertAll(transaction)
 
@@ -36,16 +35,23 @@ class TransactionService {
     }
 
     fun getAll(): List<Transaction> {
-        return transactionDao.getAll()
+        val transactionObjects = transactionDao.getAll()
+        val transactions: MutableList<Transaction> = ArrayList()
+
+        for (transactionObject: TransactionDatabaseObject in transactionObjects) {
+            transactions.add(Transaction(transactionObject))
+        }
+
+        return transactions
     }
 
 
-    fun insertAll(vararg transactions: Transaction) {
+    fun insertAll(vararg transactions: TransactionDatabaseObject) {
         transactionDao.insertAll(*transactions)
     }
 
 
-    fun delete(transaction: Transaction) {
+    fun delete(transaction: TransactionDatabaseObject) {
         transactionDao.delete(transaction)
     }
 

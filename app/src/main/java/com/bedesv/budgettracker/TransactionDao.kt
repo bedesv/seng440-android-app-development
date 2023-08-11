@@ -4,20 +4,18 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
-import java.time.LocalDate
-import java.util.Date
 
 @Dao
 interface TransactionDao {
-    @Query("SELECT * FROM `Transaction`")
-    fun getAll(): List<Transaction>
+    @Query("SELECT * FROM TransactionDatabaseObject")
+    fun getAll(): List<TransactionDatabaseObject>
 
-    @Query("SELECT * FROM `Transaction` WHERE date BETWEEN :startDate AND :endDate")
-    fun getInDateRange(startDate: Long, endDate: Long): List<Transaction>
+    @Query("SELECT * FROM TransactionDatabaseObject WHERE date BETWEEN :startDate AND :endDate")
+    fun getInDateRange(startDate: Long, endDate: Long): List<TransactionDatabaseObject>
 
     @Insert
-    fun insertAll(vararg transactions: Transaction)
+    fun insertAll(vararg transactions: TransactionDatabaseObject)
 
     @Delete
-    fun delete(transaction: Transaction)
+    fun delete(transaction: TransactionDatabaseObject)
 }
