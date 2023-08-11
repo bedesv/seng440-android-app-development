@@ -1,6 +1,7 @@
 package com.bedesv.budgettracker
 import android.app.DatePickerDialog
 import android.widget.DatePicker
+import android.widget.Toast
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.waitForUpOrCancellation
@@ -24,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import java.math.BigDecimal
@@ -53,8 +55,10 @@ fun AddTransactionScreen(navigationController: NavController) {
     var transactionAmount by remember { mutableStateOf(TextFieldValue(""))}
     var transactionAmountError by remember { mutableStateOf(false) }
     var transactionNote by remember { mutableStateOf(TextFieldValue(""))}
+    var transactionNoteError by remember { mutableStateOf(false) }
 
-    val context = BudgetTrackerApplication.AppContextManager.getAppContext()
+
+    val context = LocalContext.current
     val transactionService = TransactionService.getInstance()
     val calendar = Calendar.getInstance()
 
@@ -81,8 +85,13 @@ fun AddTransactionScreen(navigationController: NavController) {
     ) {
         TextField(
             value = transactionNote,
-            onValueChange = { transactionNote = it },
-            label = { Text(text = "Transaction Note") })
+            onValueChange = {
+                transactionNote = it
+                transactionNoteError = transactionNote.text.isEmpty()
+            },
+            label = { Text(text = "Transaction Note") },
+            isError = transactionNoteError)
+
 
         TextField(value = transactionAmount,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -114,8 +123,17 @@ fun AddTransactionScreen(navigationController: NavController) {
         )
 
         Button(onClick = {
-            transactionService.saveTransaction(transactionNote.text, transactionDateText, transactionAmount.text)
-            navigationController.navigate(Screen.HomeScreen.route)
+            transactionAmountError = !isValidTransactionAmount(transactionAmount.text)
+            transactionNoteError = transactionNote.text.isEmpty()
+            if (transactionAmountError) {
+                Toast.makeText(context, "Error: Your transaction amount is invalid", Toast.LENGTH_SHORT).show()
+            } else if (transactionNoteError) {
+                Toast.makeText(context, "Error: You must have a transaction note", Toast.LENGTH_SHORT).show()
+            } else {
+                transactionService.saveTransaction(transactionNote.text, transactionDateText, transactionAmount.text)
+                navigationController.navigate(Screen.HomeScreen.route)
+            }
+
         }) {
             Text(text = "Save Transaction")
         }

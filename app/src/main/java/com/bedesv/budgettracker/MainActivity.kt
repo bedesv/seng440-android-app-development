@@ -25,7 +25,7 @@ class MainActivity : ComponentActivity() {
 fun Main() {
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = Screen.AddTransactionScreen.route) {
+    NavHost(navController = navController, startDestination = Screen.HomeScreen.route) {
         composable(route = Screen.HomeScreen.route) {
             HomeScreen(navController)
         }
