@@ -1,6 +1,6 @@
 package com.bedesv.budgettracker
 
-import android.widget.Toast
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -23,16 +23,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 
 @Composable
 fun TransactionHeader() {
@@ -54,24 +53,29 @@ fun TransactionHeader() {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun TransactionList() {
+fun TransactionList(navigationController: NavController) {
     val transactionService = TransactionService.getInstance()
-    val transactions = remember{ mutableStateListOf<Transaction>()}
-    for (transaction: Transaction in transactionService.getAll()) {
-        transactions.add(transaction)
-    }
+    val transactions = remember{ mutableStateOf(transactionService.getAll())}
+
+    Log.d("Transaction List", transactionService.getAll().toString())
     LazyColumn(modifier = Modifier.fillMaxHeight(0.8f)
         ) {
         stickyHeader { TransactionHeader() }
-        items(transactions) { transaction ->
-            TransactionItem(transaction, transactions)
+        items(transactions.value) { transaction ->
+            TransactionItem(navigationController, transaction, transactions.value) { deletedTransactionIndex ->
+                val updatedTransactions = transactions.value.toMutableList()
+                updatedTransactions.removeAt(deletedTransactionIndex)
+                transactions.value = updatedTransactions
+            }
         }
     }
 }
 
 @Composable
-fun TransactionItem(transaction: Transaction, transactions: MutableList<Transaction>) {
-    val context = LocalContext.current
+fun TransactionItem(navigationController: NavController,
+                    transaction: Transaction,
+                    transactions: List<Transaction>,
+                    onDelete: (Int) -> Unit) {
     var expanded by remember { mutableStateOf(false) }
     val transactionService = TransactionService.getInstance()
 
@@ -117,23 +121,19 @@ fun TransactionItem(transaction: Transaction, transactions: MutableList<Transact
                 DropdownMenuItem(
                     text = {  Text("Edit") },
                     onClick = {
-                        Toast.makeText(context, "Edit", Toast.LENGTH_SHORT).show()
+                        navigationController.navigate(Screen.AddTransactionScreen.route + "/${transaction.uid}")
                     }
                 )
                 DropdownMenuItem(
                     text = { Text("Delete") },
                     onClick = {
                         transactionService.deleteByUid(transaction.uid)
-                        transactions.remove(transaction)
+                        onDelete(transactions.indexOf(transaction))
                         expanded = false
                     }
                 )
             }
         }
-
-
-
-
     }
     Divider(color = Color.LightGray, thickness = 0.5.dp)
 }

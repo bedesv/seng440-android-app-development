@@ -17,8 +17,8 @@ fun HomeScreen(navigationController: NavController) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        TransactionList()
-        Button(onClick = { navigationController.navigate(Screen.AddTransactionScreen.route) }) {
+        TransactionList(navigationController)
+        Button(onClick = { navigationController.navigate(Screen.AddTransactionScreen.route + "/-1") }) {
             Text(text = "Add Transaction")
         }
     }

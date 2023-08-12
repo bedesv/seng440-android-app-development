@@ -3,12 +3,14 @@ package com.bedesv.budgettracker
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-class Transaction constructor(val uid: Int = 0, val amount: Float, private val date: Long, val notes: String) {
+class Transaction(val amount: Float, val date: Long, val notes: String, val uid: Int = 0) {
 
-    constructor(transactionDatabaseObject: TransactionDatabaseObject): this(transactionDatabaseObject.uid,
-                                                                            transactionDatabaseObject.amount,
+
+    constructor(transactionDatabaseObject: TransactionDatabaseObject): this(transactionDatabaseObject.amount,
                                                                             transactionDatabaseObject.date,
-                                                                            transactionDatabaseObject.notes)
+                                                                            transactionDatabaseObject.notes,
+                                                                            transactionDatabaseObject.uid)
+    constructor(): this(0f, LocalDate.now().toEpochDay(), "")
 
     fun getDate(): String {
         val dateObject = LocalDate.ofEpochDay(date)
@@ -19,7 +21,7 @@ class Transaction constructor(val uid: Int = 0, val amount: Float, private val d
 
     private fun getDayNumberSuffix(day: Int): String {
         if (day in 11..13) {
-            return "th";
+            return "th"
         }
         return when (day % 10) {
             1 ->
@@ -32,6 +34,4 @@ class Transaction constructor(val uid: Int = 0, val amount: Float, private val d
                 "th"
         }
     }
-
-
 }

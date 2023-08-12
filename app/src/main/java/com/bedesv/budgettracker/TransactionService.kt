@@ -26,15 +26,14 @@ class TransactionService {
     }
 
     fun saveTransaction(notes: String, date: String, amount: String) {
-        val transaction =
-            TransactionDatabaseObject(amount=amount.toFloat(), date=LocalDate.parse(date, dateTimeFormatter).toEpochDay(), notes=notes)
+        val transaction = TransactionDatabaseObject(amount=amount.toFloat(), date=LocalDate.parse(date, dateTimeFormatter).toEpochDay(), notes=notes)
 
         transactionDao.insertAll(transaction)
 
         logger.info { "Added transaction $transaction to database" }
     }
 
-    fun getAll(): MutableList<Transaction> {
+    fun getAll(): List<Transaction> {
         val transactionObjects = transactionDao.getAll()
         val transactions: MutableList<Transaction> = ArrayList()
 
@@ -57,6 +56,15 @@ class TransactionService {
 
     fun deleteByUid(uid: Int) {
         transactionDao.deleteByUid(uid)
+    }
+
+    fun getByUid(uid: Int): Transaction {
+        return Transaction(transactionDao.getByUid(uid))
+    }
+
+    fun updateTransaction(uid: Int, notes: String, date: String, amount: String) {
+
+        transactionDao.updateTransaction(uid=uid, notes=notes, amount=amount.toFloat(), date=LocalDate.parse(date, dateTimeFormatter).toEpochDay())
     }
 
 

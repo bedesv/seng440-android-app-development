@@ -29,8 +29,10 @@ fun Main() {
         composable(route = Screen.HomeScreen.route) {
             HomeScreen(navController)
         }
-        composable(route = Screen.AddTransactionScreen.route) {
-            AddTransactionScreen(navigationController = navController)
+        composable(route = Screen.AddTransactionScreen.route + "/{transactionUid}") {
+            val arguments = requireNotNull(it.arguments)
+            val transactionUid = requireNotNull(arguments.getString("transactionUid"))
+            AddEditTransactionScreen(navController,  transactionUid.toInt())
         }
     }
 }

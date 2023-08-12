@@ -29,8 +29,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import java.math.BigDecimal
-import java.util.Calendar
 import androidx.navigation.NavController
+import java.time.LocalDate
 
 fun isValidTransactionAmount(transactionAmountStr: String): Boolean {
     if (transactionAmountStr.isBlank()) {
@@ -51,22 +51,42 @@ fun isValidTransactionAmount(transactionAmountStr: String): Boolean {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddTransactionScreen(navigationController: NavController) {
-    var transactionAmount by remember { mutableStateOf(TextFieldValue(""))}
+fun AddEditTransactionScreen(navigationController: NavController,
+                             transactionUid: Int = -1) {
+
+    val transactionService = TransactionService.getInstance()
+
+    val editing: Boolean
+    val transactionAmountInitial: String
+    val transactionNotesInitial: String
+    val transactionDateInitial: Long
+
+    if (transactionUid != -1) {
+        val transaction: Transaction = transactionService.getByUid(transactionUid)
+
+        editing = true
+        transactionAmountInitial = transaction.amount.toString()
+        transactionNotesInitial = transaction.notes
+        transactionDateInitial = transaction.date
+    } else {
+        editing = false
+        transactionAmountInitial = ""
+        transactionNotesInitial = ""
+        transactionDateInitial = LocalDate.now().toEpochDay()
+    }
+
+    var transactionAmount by remember { mutableStateOf(TextFieldValue(transactionAmountInitial)) }
     var transactionAmountError by remember { mutableStateOf(false) }
-    var transactionNote by remember { mutableStateOf(TextFieldValue(""))}
+    var transactionNote by remember { mutableStateOf(TextFieldValue(transactionNotesInitial)) }
     var transactionNoteError by remember { mutableStateOf(false) }
 
 
     val context = LocalContext.current
-    val transactionService = TransactionService.getInstance()
-    val calendar = Calendar.getInstance()
 
-
-    // Fetching current year, month and day
-    val year = calendar[Calendar.YEAR]
-    val month = calendar[Calendar.MONTH]
-    val dayOfMonth = calendar[Calendar.DAY_OF_MONTH]
+    val date = LocalDate.ofEpochDay(transactionDateInitial)
+    val year = date.year
+    val month = date.monthValue - 1
+    val dayOfMonth = date.dayOfMonth
 
     var transactionDateText by remember { mutableStateOf("$dayOfMonth/${month + 1}/$year")}
 
@@ -130,10 +150,13 @@ fun AddTransactionScreen(navigationController: NavController) {
             } else if (transactionNoteError) {
                 Toast.makeText(context, "Error: You must have a transaction note", Toast.LENGTH_SHORT).show()
             } else {
-                transactionService.saveTransaction(transactionNote.text, transactionDateText, transactionAmount.text)
+                if (editing) {
+                    transactionService.updateTransaction(transactionUid, transactionNote.text, transactionDateText, transactionAmount.text)
+                } else {
+                    transactionService.saveTransaction(transactionNote.text, transactionDateText, transactionAmount.text)
+                }
                 navigationController.navigate(Screen.HomeScreen.route)
             }
-
         }) {
             Text(text = "Save Transaction")
         }
