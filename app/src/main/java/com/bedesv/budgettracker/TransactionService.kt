@@ -34,7 +34,7 @@ class TransactionService {
         logger.info { "Added transaction $transaction to database" }
     }
 
-    fun getAll(): List<Transaction> {
+    fun getAll(): MutableList<Transaction> {
         val transactionObjects = transactionDao.getAll()
         val transactions: MutableList<Transaction> = ArrayList()
 
@@ -53,6 +53,10 @@ class TransactionService {
 
     fun delete(transaction: TransactionDatabaseObject) {
         transactionDao.delete(transaction)
+    }
+
+    fun deleteByUid(uid: Int) {
+        transactionDao.deleteByUid(uid)
     }
 
 

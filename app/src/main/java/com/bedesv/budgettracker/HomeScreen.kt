@@ -12,15 +12,12 @@ import androidx.navigation.NavController
 
 @Composable
 fun HomeScreen(navigationController: NavController) {
-    val transactionService = TransactionService.getInstance()
-
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        val transactions = transactionService.getAll()
-        TransactionList(transactions)
+        TransactionList()
         Button(onClick = { navigationController.navigate(Screen.AddTransactionScreen.route) }) {
             Text(text = "Add Transaction")
         }

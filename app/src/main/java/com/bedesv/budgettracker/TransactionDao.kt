@@ -18,4 +18,7 @@ interface TransactionDao {
 
     @Delete
     fun delete(transaction: TransactionDatabaseObject)
+
+    @Query("DELETE FROM TransactionDatabaseObject WHERE uid = :uid")
+    fun deleteByUid(uid: Int)
 }
