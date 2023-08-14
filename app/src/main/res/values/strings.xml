@@ -4,6 +4,7 @@
 
     # Home Page
     <string name="add_transaction_button">Add Transaction</string>
+    <string name="weekly_stats_button">View Weekly Stats</string>
 
     # Transaction List
     <string name="transactions_list_title">Transactions</string>
@@ -19,4 +20,8 @@
     <string name="datepicker_context">Select transaction date</string>
     <string name="expense">Expense</string>
     <string name="income">Income</string>
+
+    # Weekly Stats Page
+    <string name="spent_this_week">You\'ve spent \$%.2f so far this week</string>
+
 </resources>

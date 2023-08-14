@@ -27,7 +27,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
@@ -58,7 +57,7 @@ fun isValidTransactionAmount(transactionAmountStr: String): Boolean {
     return false
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddEditTransactionScreen(navigationController: NavController,
                              transactionUid: Int = -1) {
@@ -69,6 +68,7 @@ fun AddEditTransactionScreen(navigationController: NavController,
     val transactionAmountInitial: String
     val transactionNotesInitial: String
     val transactionDateInitial: Long
+    val transactionIsExpenseInitial: Boolean
 
     if (transactionUid != -1) {
         val transaction: Transaction = transactionService.getByUid(transactionUid)
@@ -77,18 +77,20 @@ fun AddEditTransactionScreen(navigationController: NavController,
         transactionAmountInitial = transaction.amount.toString()
         transactionNotesInitial = transaction.notes
         transactionDateInitial = transaction.date
+        transactionIsExpenseInitial = transaction.expense
     } else {
         editing = false
         transactionAmountInitial = ""
         transactionNotesInitial = ""
         transactionDateInitial = LocalDate.now().toEpochDay()
+        transactionIsExpenseInitial = true
     }
 
     var transactionAmount by remember { mutableStateOf(TextFieldValue(transactionAmountInitial)) }
     var transactionAmountError by remember { mutableStateOf(false) }
     var transactionNote by remember { mutableStateOf(TextFieldValue(transactionNotesInitial)) }
     var transactionNoteError by remember { mutableStateOf(false) }
-    var transactionIsExpense by remember {mutableStateOf(true)}
+    var transactionIsExpense by remember {mutableStateOf(transactionIsExpenseInitial)}
 
 
     val context = LocalContext.current
@@ -192,7 +194,7 @@ fun AddEditTransactionScreen(navigationController: NavController,
                 } else {
                     transactionService.saveTransaction(transactionNote.text, transactionDateText, transactionAmount.text, transactionIsExpense)
                 }
-                navigationController.navigate(Screen.HomeScreen.route)
+                navigationController.popBackStack()
             }
         }) {
             Text(text = stringResource(id = R.string.save_transaction_button))

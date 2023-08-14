@@ -54,9 +54,15 @@ fun TransactionHeader() {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun TransactionList(navigationController: NavController) {
+fun TransactionList(navigationController: NavController, inputTransactions: List<Transaction>? = null) {
     val transactionService = TransactionService.getInstance()
-    val transactions = remember{ mutableStateOf(transactionService.getAll())}
+
+    val transactions = if (inputTransactions.isNullOrEmpty()) {
+        remember{ mutableStateOf(transactionService.getAll())}
+    } else {
+        remember{ mutableStateOf(inputTransactions)}
+    }
+
 
     Log.d("Transaction List", transactionService.getAll().toString())
     LazyColumn(modifier = Modifier.fillMaxHeight(0.8f)

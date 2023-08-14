@@ -4,7 +4,6 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import io.github.oshai.kotlinlogging.KotlinLogging
 
-
 class TransactionService {
 
     private val logger = KotlinLogging.logger{}
@@ -65,6 +64,26 @@ class TransactionService {
             date=LocalDate.parse(date, dateTimeFormatter).toEpochDay(),
             expense = expense
         )
+    }
+
+    fun getTransactionsWithinDateRange(startDate: LocalDate, endDate: LocalDate): List<Transaction>  {
+        val transactionObjects = transactionDao.getInDateRange(startDate.toEpochDay(), endDate.toEpochDay())
+        val transactions: MutableList<Transaction> = ArrayList()
+
+        for (transactionObject: TransactionDatabaseObject in transactionObjects) {
+            transactions.add(Transaction(transactionObject))
+        }
+        return transactions
+    }
+
+    fun calculateTotalSpent(transactions: List<Transaction>): Float {
+        var total = 0f
+        for (transaction in transactions) {
+            if (transaction.expense) {
+                total += transaction.amount
+            }
+        }
+        return total
     }
 
 

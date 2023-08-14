@@ -8,10 +8,10 @@ import androidx.room.Query
 
 @Dao
 interface TransactionDao {
-    @Query("SELECT * FROM TransactionDatabaseObject")
+    @Query("SELECT * FROM TransactionDatabaseObject ORDER BY date DESC")
     fun getAll(): List<TransactionDatabaseObject>
 
-    @Query("SELECT * FROM TransactionDatabaseObject WHERE date BETWEEN :startDate AND :endDate")
+    @Query("SELECT * FROM TransactionDatabaseObject WHERE date BETWEEN :startDate AND :endDate ORDER BY date DESC")
     fun getInDateRange(startDate: Long, endDate: Long): List<TransactionDatabaseObject>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

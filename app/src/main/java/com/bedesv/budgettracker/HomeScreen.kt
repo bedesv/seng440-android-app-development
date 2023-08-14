@@ -29,6 +29,9 @@ fun HomeScreen(navigationController: NavController) {
                 Button(onClick = { navigationController.navigate(Screen.AddTransactionScreen.route + "/-1") }) {
                     Text(text = stringResource(id = R.string.add_transaction_button))
                 }
+                Button(onClick = { navigationController.navigate(Screen.WeeklyStatsScreen.route) }) {
+                    Text(text = stringResource(id = R.string.weekly_stats_button))
+                }
             }
         } else -> {
         Row(
@@ -45,6 +48,9 @@ fun HomeScreen(navigationController: NavController) {
                 horizontalAlignment = Alignment.CenterHorizontally) {
                 Button(onClick = { navigationController.navigate(Screen.AddTransactionScreen.route + "/-1") }) {
                     Text(text = stringResource(id = R.string.add_transaction_button))
+                }
+                Button(onClick = { navigationController.navigate(Screen.WeeklyStatsScreen.route) }) {
+                    Text(text = stringResource(id = R.string.weekly_stats_button))
                 }
             }
 
