@@ -14,22 +14,25 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material3.Button
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalTextInputService
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
@@ -55,7 +58,7 @@ fun isValidTransactionAmount(transactionAmountStr: String): Boolean {
     return false
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun AddEditTransactionScreen(navigationController: NavController,
                              transactionUid: Int = -1) {
@@ -106,7 +109,9 @@ fun AddEditTransactionScreen(navigationController: NavController,
     datePicker.setCanceledOnTouchOutside(false)
 
     Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -115,14 +120,20 @@ fun AddEditTransactionScreen(navigationController: NavController,
             horizontalArrangement = Arrangement.Start
         ) {
             Text(
-                text=stringResource(id = R.string.expense),
-                style = MaterialTheme.typography.titleLarge
+                text=stringResource(id = R.string.income),
+                style = MaterialTheme.typography.titleLarge,
+                modifier=Modifier.padding(10.dp)
             )
-            Checkbox(
+            Switch(
                 checked = transactionIsExpense,
                 onCheckedChange = {isChecked: Boolean ->
                     transactionIsExpense = isChecked
                 }
+            )
+            Text(
+                text=stringResource(id = R.string.expense),
+                style = MaterialTheme.typography.titleLarge,
+                modifier=Modifier.padding(10.dp)
             )
         }
         TextField(
@@ -147,21 +158,24 @@ fun AddEditTransactionScreen(navigationController: NavController,
         )
 
         val calendarIcon = @Composable {Icon(imageVector = Icons.Filled.CalendarMonth, contentDescription = stringResource(id = R.string.datepicker_context))}
-
-        TextField(value = transactionDateText,
-            onValueChange = {transactionDateText = it},
-            trailingIcon = calendarIcon,
-            readOnly = true,
-            modifier = Modifier.pointerInput(Unit) {
-                awaitEachGesture {
-                    awaitFirstDown(pass = PointerEventPass.Initial)
-                    val upEvent = waitForUpOrCancellation(pass = PointerEventPass.Initial)
-                    if (upEvent != null) {
-                        datePicker.show()
+        CompositionLocalProvider(LocalTextInputService provides null) {
+            TextField(value = transactionDateText,
+                onValueChange = {},
+                trailingIcon = calendarIcon,
+                readOnly = true,
+                modifier = Modifier
+                    .pointerInput(Unit) {
+                        awaitEachGesture {
+                            awaitFirstDown(pass = PointerEventPass.Initial)
+                            val upEvent = waitForUpOrCancellation(pass = PointerEventPass.Initial)
+                            if (upEvent != null) {
+                                datePicker.show()
+                            }
+                        }
                     }
-                }
-            }
-        )
+            )
+        }
+
         val transactionAmountErrorMessage = stringResource(id = R.string.transaction_amount_error_message)
         val transactionNoteErrorMessage = stringResource(id = R.string.transaction_note_error_message)
 

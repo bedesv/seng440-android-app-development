@@ -17,5 +17,6 @@
     <string name="transaction_note_error_message">Error: You must have a transaction note</string>
     <string name="transaction_amount_error_message">Error: Your transaction amount is invalid</string>
     <string name="datepicker_context">Select transaction date</string>
-    <string name="expense">Expense?</string>
+    <string name="expense">Expense</string>
+    <string name="income">Income</string>
 </resources>
