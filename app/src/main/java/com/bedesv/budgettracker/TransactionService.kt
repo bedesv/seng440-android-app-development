@@ -25,8 +25,12 @@ class TransactionService {
         }
     }
 
-    fun saveTransaction(notes: String, date: String, amount: String) {
-        val transaction = TransactionDatabaseObject(amount=amount.toFloat(), date=LocalDate.parse(date, dateTimeFormatter).toEpochDay(), notes=notes)
+    fun saveTransaction(notes: String, date: String, amount: String, expense: Boolean) {
+        val transaction = TransactionDatabaseObject(
+            amount=amount.toFloat(),
+            date=LocalDate.parse(date, dateTimeFormatter).toEpochDay(),
+            notes=notes,
+            expense=expense)
 
         transactionDao.insertAll(transaction)
 
@@ -44,16 +48,6 @@ class TransactionService {
         return transactions
     }
 
-
-    fun insertAll(vararg transactions: TransactionDatabaseObject) {
-        transactionDao.insertAll(*transactions)
-    }
-
-
-    fun delete(transaction: TransactionDatabaseObject) {
-        transactionDao.delete(transaction)
-    }
-
     fun deleteByUid(uid: Int) {
         transactionDao.deleteByUid(uid)
     }
@@ -62,9 +56,15 @@ class TransactionService {
         return Transaction(transactionDao.getByUid(uid))
     }
 
-    fun updateTransaction(uid: Int, notes: String, date: String, amount: String) {
+    fun updateTransaction(uid: Int, notes: String, date: String, amount: String, expense: Boolean) {
 
-        transactionDao.updateTransaction(uid=uid, notes=notes, amount=amount.toFloat(), date=LocalDate.parse(date, dateTimeFormatter).toEpochDay())
+        transactionDao.updateTransaction(
+            uid=uid,
+            notes=notes,
+            amount=amount.toFloat(),
+            date=LocalDate.parse(date, dateTimeFormatter).toEpochDay(),
+            expense = expense
+        )
     }
 
 

@@ -29,6 +29,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -43,7 +44,7 @@ fun TransactionHeader() {
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
-            text = "Transactions",
+            text = stringResource(id = R.string.transactions_list_title),
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold
         )
@@ -97,8 +98,13 @@ fun TransactionItem(navigationController: NavController,
                 text = transaction.getDate(),
                 style = MaterialTheme.typography.bodyMedium
             )
+            val transactionStringFormat: String = if (transaction.expense) {
+                "-\$%.2f"
+            } else {
+                "\$%.2f"
+            }
             Text(
-                text = String.format("$%.2f",transaction.amount),
+                text = String.format(transactionStringFormat,transaction.amount),
                 style = MaterialTheme.typography.bodyMedium
             )
         }
@@ -119,13 +125,13 @@ fun TransactionItem(navigationController: NavController,
                 onDismissRequest = { expanded = false }
             ) {
                 DropdownMenuItem(
-                    text = {  Text("Edit") },
+                    text = {  Text(stringResource(id = R.string.edit)) },
                     onClick = {
                         navigationController.navigate(Screen.AddTransactionScreen.route + "/${transaction.uid}")
                     }
                 )
                 DropdownMenuItem(
-                    text = { Text("Delete") },
+                    text = { Text(stringResource(id = R.string.delete)) },
                     onClick = {
                         transactionService.deleteByUid(transaction.uid)
                         onDelete(transactions.indexOf(transaction))

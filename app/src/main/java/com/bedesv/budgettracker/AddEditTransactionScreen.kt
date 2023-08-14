@@ -7,13 +7,17 @@ import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.waitForUpOrCancellation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -26,8 +30,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.unit.dp
 import java.math.BigDecimal
 import androidx.navigation.NavController
 import java.time.LocalDate
@@ -79,6 +85,7 @@ fun AddEditTransactionScreen(navigationController: NavController,
     var transactionAmountError by remember { mutableStateOf(false) }
     var transactionNote by remember { mutableStateOf(TextFieldValue(transactionNotesInitial)) }
     var transactionNoteError by remember { mutableStateOf(false) }
+    var transactionIsExpense by remember {mutableStateOf(true)}
 
 
     val context = LocalContext.current
@@ -99,19 +106,33 @@ fun AddEditTransactionScreen(navigationController: NavController,
     datePicker.setCanceledOnTouchOutside(false)
 
     Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
+        modifier = Modifier.fillMaxSize().padding(16.dp),
+        verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start
+        ) {
+            Text(
+                text=stringResource(id = R.string.expense),
+                style = MaterialTheme.typography.titleLarge
+            )
+            Checkbox(
+                checked = transactionIsExpense,
+                onCheckedChange = {isChecked: Boolean ->
+                    transactionIsExpense = isChecked
+                }
+            )
+        }
         TextField(
             value = transactionNote,
             onValueChange = {
                 transactionNote = it
                 transactionNoteError = transactionNote.text.isEmpty()
             },
-            label = { Text(text = "Transaction Note") },
+            label = { Text(text = stringResource(id = R.string.transaction_note)) },
             isError = transactionNoteError)
-
 
         TextField(value = transactionAmount,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -122,10 +143,10 @@ fun AddEditTransactionScreen(navigationController: NavController,
                 transactionAmountError = !isValidTransactionAmount(transactionAmount.text)
             },
             isError = transactionAmountError,
-            label = { Text(text = "Transaction Amount ($)") },
+            label = { Text(text = stringResource(id = R.string.transaction_amount)) },
         )
 
-        val calendarIcon = @Composable {Icon(imageVector = Icons.Filled.CalendarMonth, contentDescription = "Select transaction date")}
+        val calendarIcon = @Composable {Icon(imageVector = Icons.Filled.CalendarMonth, contentDescription = stringResource(id = R.string.datepicker_context))}
 
         TextField(value = transactionDateText,
             onValueChange = {transactionDateText = it},
@@ -141,24 +162,26 @@ fun AddEditTransactionScreen(navigationController: NavController,
                 }
             }
         )
+        val transactionAmountErrorMessage = stringResource(id = R.string.transaction_amount_error_message)
+        val transactionNoteErrorMessage = stringResource(id = R.string.transaction_note_error_message)
 
         Button(onClick = {
             transactionAmountError = !isValidTransactionAmount(transactionAmount.text)
             transactionNoteError = transactionNote.text.isEmpty()
-            if (transactionAmountError) {
-                Toast.makeText(context, "Error: Your transaction amount is invalid", Toast.LENGTH_SHORT).show()
-            } else if (transactionNoteError) {
-                Toast.makeText(context, "Error: You must have a transaction note", Toast.LENGTH_SHORT).show()
+            if (transactionNoteError) {
+                Toast.makeText(context, transactionNoteErrorMessage, Toast.LENGTH_SHORT).show()
+            } else if (transactionAmountError) {
+                Toast.makeText(context, transactionAmountErrorMessage, Toast.LENGTH_SHORT).show()
             } else {
                 if (editing) {
-                    transactionService.updateTransaction(transactionUid, transactionNote.text, transactionDateText, transactionAmount.text)
+                    transactionService.updateTransaction(transactionUid, transactionNote.text, transactionDateText, transactionAmount.text, transactionIsExpense)
                 } else {
-                    transactionService.saveTransaction(transactionNote.text, transactionDateText, transactionAmount.text)
+                    transactionService.saveTransaction(transactionNote.text, transactionDateText, transactionAmount.text, transactionIsExpense)
                 }
                 navigationController.navigate(Screen.HomeScreen.route)
             }
         }) {
-            Text(text = "Save Transaction")
+            Text(text = stringResource(id = R.string.save_transaction_button))
         }
     }
 }

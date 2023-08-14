@@ -26,6 +26,6 @@ interface TransactionDao {
     @Query("SELECT * from TransactionDatabaseObject where uid = :uid")
     fun getByUid(uid: Int): TransactionDatabaseObject
 
-    @Query("UPDATE TransactionDatabaseObject SET notes=:notes, date=:date, amount=:amount WHERE uid = :uid")
-    fun updateTransaction(uid: Int, notes: String, date: Long, amount: Float)
+    @Query("UPDATE TransactionDatabaseObject SET notes=:notes, date=:date, amount=:amount, expense=:expense WHERE uid = :uid")
+    fun updateTransaction(uid: Int, notes: String, date: Long, amount: Float, expense: Boolean)
 }
