@@ -1,0 +1,34 @@
+<resources>
+    <string name="app_name">Frugal Tracker</string>
+    <string name="title_activity_add_transaction">Frugal Tracker</string>
+    <string name="preference_file_key">user_budget_preferences</string>
+
+    # Home Page
+    <string name="add_transaction_button">Add Transaction</string>
+    <string name="weekly_stats_button">View Weekly Stats</string>
+    <string name="export_transactions_button">Export Transactions To CSV</string>
+    <string name="export_transactions_error_message">Something went wrong, try exporting your transactions again</string>
+    <string name="export_transactions_success_message">Successfully exported transactions to a CSV</string>
+
+
+
+    # Transaction List
+    <string name="transactions_list_title">Transactions</string>
+    <string name="delete">Delete</string>
+    <string name="edit">Edit</string>
+
+    # Add/Edit Transaction Page
+    <string name="save_transaction_button">Save Transaction</string>
+    <string name="transaction_note">Transaction Note</string>
+    <string name="transaction_amount">Transaction Amount ($)</string>
+    <string name="transaction_note_error_message">Error: You must have a transaction note</string>
+    <string name="transaction_amount_error_message">Error: Your transaction amount is invalid</string>
+    <string name="datepicker_context">Select transaction date</string>
+    <string name="expense">Expense</string>
+    <string name="income">Income</string>
+
+    # Weekly Stats Page
+    <string name="spent_this_week">You\'ve spent \$%.2f in %d days this week</string>
+    <string name="weekly_budget">Your current weekly budget: </string>
+
+</resources>
