@@ -81,7 +81,7 @@ fun HomeScreenButtons(navigationController: NavController) {
                 Toast.makeText(context, exportTransactionsSuccessMessage, Toast.LENGTH_SHORT).show()
                 val activityContext = LocalContext.current
                 openDialog.value = true
-                OpenExcelDialog(openDialog, uri, activityContext)
+                OpenCSVDialog(openDialog, uri, activityContext)
             } else {
                 Toast.makeText(context, exportTransactionsErrorMessage, Toast.LENGTH_SHORT).show()
             }
@@ -111,19 +111,21 @@ fun HomeScreenButtons(navigationController: NavController) {
 }
 
 @Composable
-fun OpenExcelDialog(openDialog: MutableState<Boolean>, uri: Uri, context: Context) {
+fun OpenCSVDialog(openDialog: MutableState<Boolean>, uri: Uri, context: Context) {
     val coroutineScope = rememberCoroutineScope()
+    val dialogTitle = stringResource(id = R.string.intent_title)
+    val errorToast = stringResource(id = R.string.intent_error_toast)
 
     if (openDialog.value) {
         AlertDialog(
-            title = { Text("Open CSV") },
-            text = { Text("Do you want to open the exported file in a supported app?") },
+            title = { Text(dialogTitle) },
+            text = { Text(stringResource(id = R.string.open_csv_dialog_text)) },
             onDismissRequest = {
                 openDialog.value = false
-            },  // This is called when the user tries to dismiss the dialog (either by tapping outside or using the back button)
+            },
             dismissButton = {
                 TextButton(onClick = { openDialog.value = false }) {
-                    Text("No")
+                    Text(stringResource(id = R.string.no))
                 }
             },
             confirmButton = {
@@ -135,7 +137,7 @@ fun OpenExcelDialog(openDialog: MutableState<Boolean>, uri: Uri, context: Contex
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
 
-                        val chooser = Intent.createChooser(intent, "Open CSV")
+                        val chooser = Intent.createChooser(intent, dialogTitle)
 
                         try {
                             context.startActivity(chooser)
@@ -143,13 +145,13 @@ fun OpenExcelDialog(openDialog: MutableState<Boolean>, uri: Uri, context: Contex
                             e.message?.let { Log.e("Home Screen", it) }
                             Toast.makeText(
                                 context,
-                                "No application found to open CSV file",
+                                errorToast,
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
                     }
                 }) {
-                    Text("Yes")
+                    Text(stringResource(id = R.string.yes))
                 }
             }
         )

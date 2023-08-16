@@ -9,6 +9,9 @@
     <string name="export_transactions_button">Export Transactions To CSV</string>
     <string name="export_transactions_error_message">Something went wrong, try exporting your transactions again</string>
     <string name="export_transactions_success_message">Successfully exported transactions to a CSV</string>
+    <string name="intent_title">Open CSV</string>
+    <string name="intent_error_toast">No application found to open CSV file</string>
+    <string name="open_csv_dialog_text">Do you want to open the exported file in a supported app?</string>
 
     # Transaction List
     <string name="transactions_list_title">Transactions</string>
@@ -29,5 +32,7 @@
     # Weekly Stats Page
     <string name="spent_this_week">You\'ve spent \$%.2f in %d days this week</string>
     <string name="weekly_budget">Your current weekly budget: </string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 
 </resources>

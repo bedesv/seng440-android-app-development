@@ -9,6 +9,9 @@
     <string name="export_transactions_button">Transaktionen als CSV exportieren</string>
     <string name="export_transactions_error_message">Etwas ist schiefgegangen. Versuchen Sie, Ihre Transaktionen erneut zu exportieren.</string>
     <string name="export_transactions_success_message">Transaktionen erfolgreich als CSV exportiert</string>
+    <string name="intent_title">CSV öffnen</string>
+    <string name="intent_error_toast">Keine Anwendung zum Öffnen von CSV-Dateien gefunden</string>
+    <string name="open_csv_dialog_text">Möchten Sie die exportierte Datei in einer unterstützten App öffnen?</string>
 
     # Transaction List
     <string name="transactions_list_title">Transaktionen</string>
@@ -30,5 +33,7 @@
     # Weekly Stats Page
     <string name="spent_this_week">Sie haben diese Woche %.2f € in %d Tagen ausgegeben</string>
     <string name="weekly_budget">Ihr aktuelles wöchentliches Budget: </string>
+    <string name="yes">Ja</string>
+    <string name="no">Nein</string>
 
 </resources>
