@@ -62,7 +62,7 @@ fun TransactionList(navigationController: NavController, inputTransactions:  Mut
 
 
     Log.d("Transaction List", transactionService.getAll().toString())
-    LazyColumn(modifier = Modifier.fillMaxHeight(0.8f)
+    LazyColumn(modifier = Modifier.fillMaxHeight()
         ) {
         stickyHeader { TransactionHeader() }
         items(transactions.value) { transaction ->
@@ -102,9 +102,9 @@ fun TransactionItem(navigationController: NavController,
                 style = MaterialTheme.typography.bodyMedium
             )
             val transactionStringFormat: String = if (transaction.expense) {
-                "-\$%.2f"
+                "-" + stringResource(id = R.string.number_format)
             } else {
-                "\$%.2f"
+                stringResource(id = R.string.number_format)
             }
             Text(
                 text = String.format(transactionStringFormat,transaction.amount),
